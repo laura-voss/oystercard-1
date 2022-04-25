@@ -15,12 +15,7 @@ describe Oystercard do
     oyster.top_up(10)
     expect(oyster.balance).to eq(10)
   end
-
-  # it 'raises error if more than £90 is deposited in single transaction' do 
-  #   new_oyster = Oystercard.new
-  #   expect { new_oyster.top_up(91) }.to raise_error('maximum balance reached')
-  # end
-
+  
   it 'raises an error if the maximum balance it exceeded' do
     maximum_balance = Oystercard::MAXIMUM_CAPACITY
     subject.top_up maximum_balance
