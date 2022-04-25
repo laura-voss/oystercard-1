@@ -32,4 +32,34 @@ describe Oystercard do
     oyster.deduct(10)
     expect(oyster.balance).to eq(60)
   end
+
+  it 'responds to touch_in method' do
+    expect(Oystercard.new).to respond_to(:touch_in)
+  end
+
+  it 'status changes to in_use when card touched in' do
+    oyster = Oystercard.new
+    oyster.touch_in
+    expect(oyster.status).to eq("in_use") 
+  end
+
+  it 'responds to touch_out method' do
+    expect(Oystercard.new).to respond_to(:touch_out)
+  end
+
+  it 'status changes to not_in_use when card touched out' do
+    oyster = Oystercard.new
+    expect(oyster.status).to eq("not_in_use")
+  end
+
+  it 'raises error at touch_in if card already in use' do
+    oyster = Oystercard.new
+    oyster.touch_in
+    expect(oyster).to be_in_journey
+  end
+
+  it 'rasises error at touch_out if card is not in use' do
+    oyster = Oystercard.new
+    expect(oyster).not_to be_in_journey
+  end
 end
