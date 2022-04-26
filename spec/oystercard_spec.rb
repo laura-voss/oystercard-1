@@ -68,4 +68,11 @@ describe Oystercard do
   it "raises error when trying to touch_in with less than gbp1" do
     expect { subject.touch_in }.to raise_error "Not enough funds"
   end
+
+  it "deducts £1 on touch-out" do
+    subject.top_up(1)
+    subject.touch_in
+    expect{subject.touch_out}.to change{subject.balance}.by(-(Oystercard::FARE))
+  end
+
 end
