@@ -1,7 +1,6 @@
 class Oystercard
 
-  attr_reader :balance, :entry_station, :exit_station, :journey, :journey_history
-  attr_accessor :status
+  attr_reader :balance, :journey, :journey_history
   
   MAXIMUM_CAPACITY = 90
   MINIMUM_BALANCE = 1
@@ -9,9 +8,6 @@ class Oystercard
 
   def initialize
     @balance = 0
-    # @status = "not_in_use"
-    # @entry_station = nil
-    # @exit_station = nil
     @journey = {in: nil, out: nil}
     @journey_history = []
   end
@@ -24,36 +20,21 @@ class Oystercard
   def touch_in(entry_station)
     fail "Not enough funds" if not_enough?
     fail 'Oyster already touched in' if in_journey?
-    # @status = "in_use"
-    # @entry_station = entry_station
     @journey[:in] = entry_station
-    # add_to_journey(entry_station)
   end
 
   def touch_out(exit_station)
     fail 'Oyster not touched in' if !in_journey?
-    # @status = "not_in_use"
     deduct
-    # @entry_station = nil
-    # @exit_station = exit_station
     @journey[:out] = exit_station 
-    # add_to_journey(exit_station)
-    @journey_history << @journey
+    #@journey_history << @journey
   end
 
   def in_journey?
-    # @entry_station
-    @journey[:out]
+    @journey[:in] != nil && @journey[:out] == nil
   end
 
   private
-
-  # def add_to_journey(station)
-  #   journey = []
-  #   journey << station
-
-  #   @journey = {in: journey[0], out: journey[1]}
-  # end
 
   def not_enough?
     @balance < MINIMUM_BALANCE
