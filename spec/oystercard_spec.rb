@@ -110,4 +110,16 @@ describe Oystercard do
     expect(subject.journey).to eq ({in: entry_station, out: exit_station})
   end
 
+  it "initiates new card with empty journey history" do
+    expect(subject.journey_history).to eq([])
+  end
+
+  it "adds completed journey to journey history" do
+    subject.top_up(10)
+    subject.touch_in(entry_station)
+    subject.touch_out(exit_station)
+    journey = subject.journey
+    expect(subject.journey_history).to include(journey)
+  end
+
 end
