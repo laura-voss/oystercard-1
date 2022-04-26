@@ -3,6 +3,7 @@ require 'oystercard'
 describe Oystercard do
   
   let(:entry_station){ double :entry_station }
+  let(:exit_station){ double :exit_station }
   
   it 'initializes new card' do
     expect(Oystercard.new).to be_an_instance_of(Oystercard)
@@ -48,7 +49,7 @@ describe Oystercard do
   end
 
   it 'responds to touch_out method' do
-    expect(Oystercard.new).to respond_to(:touch_out)
+    expect(Oystercard.new).to respond_to(:touch_out).with(1).argument
   end
 
   it 'status changes to not_in_use when card touched out' do
@@ -75,7 +76,7 @@ describe Oystercard do
   it "deducts £1 on touch-out" do
     subject.top_up(1)
     subject.touch_in(entry_station)
-    expect{subject.touch_out}.to change{subject.balance}.by(-(Oystercard::FARE))
+    expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-(Oystercard::FARE))
   end
 
   it "remembers entry station after touch_in" do
@@ -87,8 +88,26 @@ describe Oystercard do
   it "forgets entry station after touch_out" do
     subject.top_up(10)
     subject.touch_in(entry_station)
-    subject.touch_out
+    subject.touch_out(exit_station)
     expect(subject.entry_station).to be(nil)
+  end
+
+  it "shows the exit station on touch-out" do
+    subject.top_up(10)
+    subject.touch_in(entry_station)
+    subject.touch_out(exit_station)
+    expect(subject.exit_station).to eq exit_station
+  end
+
+  it "responds to #journey" do
+    expect(subject).to respond_to :journey
+  end
+
+  it "creates a hash with the journey" do
+    subject.top_up(10)
+    subject.touch_in(entry_station)
+    subject.touch_out(exit_station)
+    expect(subject.journey).to eq ({in: entry_station, out: exit_station})
   end
 
 end
