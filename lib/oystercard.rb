@@ -17,9 +17,7 @@ class Oystercard
     @balance += money
   end
 
-  def deduct(money)
-    @balance -= money
-  end
+
 
   def touch_in
     fail "Not enough funds" if not_enough?
@@ -30,7 +28,7 @@ class Oystercard
   def touch_out
     fail 'Oyster not touched in' if !in_journey?
     @status = "not_in_use"
-    @balance -= FARE
+    deduct
   end
 
   def in_journey?
@@ -45,6 +43,10 @@ class Oystercard
 
   def max_balance?(money)
     balance + money > MAXIMUM_CAPACITY
+  end
+
+  def deduct
+    @balance -= FARE
   end
 
 end

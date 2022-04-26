@@ -22,16 +22,16 @@ describe Oystercard do
     expect{ subject.top_up 1 }.to raise_error "Maximum balance of #{maximum_balance} exceeded"
   end
 
-  it "responds to deduct method" do
-    expect(Oystercard.new).to respond_to(:deduct).with(1).argument
-  end
+  # it "responds to deduct method" do
+  #   expect(Oystercard.new).to respond_to(:deduct).with(1).argument
+  # end
 
-  it "deducts fare from balance" do
-    oyster = Oystercard.new
-    oyster.top_up(70)
-    oyster.deduct(10)
-    expect(oyster.balance).to eq(60)
-  end
+  # it "deducts fare from balance" do
+  #   oyster = Oystercard.new
+  #   oyster.top_up(70)
+  #   oyster.deduct(10)
+  #   expect(oyster.balance).to eq(60)
+  # end
 
   it 'responds to touch_in method' do
     expect(Oystercard.new).to respond_to(:touch_in)
