@@ -4,6 +4,7 @@ class Oystercard
   attr_accessor :status
   
   MAXIMUM_CAPACITY = 90
+  MINIMUM_BALANCE = 1
 
   def initialize
     @balance = 0
@@ -20,6 +21,7 @@ class Oystercard
   end
 
   def touch_in
+    fail "Not enough funds" if @balance < MINIMUM_BALANCE
     fail 'Oyster already touched in' if in_journey?
     @status = "in_use"
   end

@@ -39,6 +39,7 @@ describe Oystercard do
 
   it 'status changes to in_use when card touched in' do
     oyster = Oystercard.new
+    oyster.top_up(1)
     oyster.touch_in
     expect(oyster.status).to eq("in_use") 
   end
@@ -54,6 +55,7 @@ describe Oystercard do
 
   it 'raises error at touch_in if card already in use' do
     oyster = Oystercard.new
+    oyster.top_up(1)
     oyster.touch_in
     expect(oyster).to be_in_journey
   end
@@ -61,5 +63,9 @@ describe Oystercard do
   it 'rasises error at touch_out if card is not in use' do
     oyster = Oystercard.new
     expect(oyster).not_to be_in_journey
+  end
+
+  it "raises error when trying to touch_in with less than gbp1" do
+    expect { subject.touch_in }.to raise_error "Not enough funds"
   end
 end
