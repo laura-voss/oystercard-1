@@ -1,6 +1,9 @@
 require 'oystercard'
 
 describe Oystercard do
+  
+  let(:entry_station){ double :entry_station }
+  
   it 'initializes new card' do
     expect(Oystercard.new).to be_an_instance_of(Oystercard)
   end
@@ -34,14 +37,14 @@ describe Oystercard do
   # end
 
   it 'responds to touch_in method' do
-    expect(Oystercard.new).to respond_to(:touch_in)
+    expect(Oystercard.new).to respond_to(:touch_in).with(1).argument
   end
 
   it 'status changes to in_use when card touched in' do
     oyster = Oystercard.new
     oyster.top_up(1)
-    oyster.touch_in
-    expect(oyster.status).to eq("in_use") 
+    oyster.touch_in(entry_station)
+    expect(oyster.in_journey?).to be_truthy
   end
 
   it 'responds to touch_out method' do
@@ -50,13 +53,13 @@ describe Oystercard do
 
   it 'status changes to not_in_use when card touched out' do
     oyster = Oystercard.new
-    expect(oyster.status).to eq("not_in_use")
+    expect(oyster.in_journey?).to be_falsy
   end
 
   it 'raises error at touch_in if card already in use' do
     oyster = Oystercard.new
     oyster.top_up(1)
-    oyster.touch_in
+    oyster.touch_in(entry_station)
     expect(oyster).to be_in_journey
   end
 
@@ -66,13 +69,26 @@ describe Oystercard do
   end
 
   it "raises error when trying to touch_in with less than gbp1" do
-    expect { subject.touch_in }.to raise_error "Not enough funds"
+    expect { subject.touch_in(entry_station) }.to raise_error "Not enough funds"
   end
 
   it "deducts £1 on touch-out" do
     subject.top_up(1)
-    subject.touch_in
+    subject.touch_in(entry_station)
     expect{subject.touch_out}.to change{subject.balance}.by(-(Oystercard::FARE))
+  end
+
+  it "remembers entry station after touch_in" do
+    subject.top_up(10)
+    subject.touch_in(entry_station)
+    expect(subject.entry_station).to eq(entry_station)
+  end
+
+  it "forgets entry station after touch_out" do
+    subject.top_up(10)
+    subject.touch_in(entry_station)
+    subject.touch_out
+    expect(subject.entry_station).to be(nil)
   end
 
 end
