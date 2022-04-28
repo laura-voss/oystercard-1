@@ -22,51 +22,35 @@ describe Oystercard do
   end
 
   describe '#touch_in' do
-    
-    it 'changes in_journey? to true' do
-      subject.top_up(1)
-      subject.touch_in(:entry_station)
-      expect(subject.in_journey?).to be true
-    end
-
-    it 'raises error if card touched_in twice' do
-      subject.top_up(1)
-      subject.touch_in(:entry_station)
-      expect{subject.touch_in(:entry_station)}.to raise_error 'Oyster already touched in'
-    end
 
     it "raises error when trying to touch_in with less than £1" do
       expect { subject.touch_in(entry_station) }.to raise_error "Not enough funds"
     end
+
+    it "raises a penalty when already in a journey" do
+      subject.top_up(20)
+      subject.touch_in(:entry_station)
+      expect{ subject.touch_in(:entry_station) }.to change{subject.balance}.by(-Journey::PENALTY_FARE)
+    end
+
   end
 
   describe '#touch_out' do
-
-    it 'changes in_journey? to false' do
-      expect(subject.in_journey?).to be false
-    end
-
-    it 'rasises error at touch_out if card not in_journey?' do
-      expect{subject.touch_out(:exit_station)}.to raise_error 'Oyster not touched in' 
-    end
-
-    it "deducts £1" do
+    it "reduce the balance on the card by 1 for a successful journey" do
       subject.top_up(1)
       subject.touch_in(:entry_station)
-      expect{subject.touch_out(exit_station)}.to change{subject.balance}.by(-Oystercard::FARE)
+      expect{subject.touch_out(:exit_station)}.to change{subject.balance}.by(-Journey::MINIMUM_FARE)
+    end
+
+    it "Charges the penalty when touching out while not in a journey" do
+      subject.top_up(50)
+      expect{subject.touch_out(:exit_station)}.to change{subject.balance}.by(-Journey::PENALTY_FARE)
     end
   end
 
-  describe '#journey' do
+  describe '#journey_history' do
 
-    it 'resets the journey hash to nil after touch out' do
-      subject.top_up(10)
-      subject.touch_in(:entry_station)
-      subject.touch_out(:exit_station)
-      expect(subject.journey).to eq ({})
-    end
-
-    it 'pushes the journey hash to the journey_history array after touch in' do
+    it 'should contain a record of a completed journey' do
       subject.top_up(10)
       subject.touch_in(:entry_station)
       subject.touch_out(:exit_station)
