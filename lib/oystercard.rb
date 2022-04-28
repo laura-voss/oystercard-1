@@ -8,7 +8,7 @@ class Oystercard
 
   def initialize
     @balance = 0
-    @journey = {in: nil, out: nil}
+    @journey = {}
     @journey_history = []
   end
 
@@ -27,7 +27,8 @@ class Oystercard
     fail 'Oyster not touched in' if !in_journey?
     deduct
     @journey[:out] = exit_station 
-    #@journey_history << @journey
+    @journey_history << @journey
+    @journey = {}
   end
 
   def in_journey?
